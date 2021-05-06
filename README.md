@@ -1,66 +1,73 @@
 # テーブル設計
 
 ## usersテーブル
-| Column          | Type    | Options        | 
-| --------------- | ------- | -------------- |
-| nickname        | string  | null: false    |
-| email           | string  | null: false    |
-| password        | string  | null: false    |
-| last_name       | string  | null: false    |
-| first_name      | string  | null: false    |
-| last_name_kana  | string  | null: false    |
-| first_name_kana | string  | null: false    |
-| birth_year      | integer | null: false    |
-| birth_month     | integer | null: false    |
-| birth_date      | integer | null: false    |
+| Column             | Type    | Options                      | 
+| ------------------ | ------- | ---------------------------- |
+| nickname           | string  | null: false                  |
+| email              | string  | null: false, unique: true    |
+| encrypted_password | string  | null: false                  |
+| last_name          | string  | null: false                  |
+| first_name         | string  | null: false                  |
+| last_name_kana     | string  | null: false                  |
+| first_name_kana    | string  | null: false                  |
+| birth_date         | date    | null: false                  |
 
 
 ### Association
 has_many :items
 has_many :comments
+has_many :purchase_records
 
 ## itemsテーブル
-| Column              | Type          | Options        | 
-| ------------------- | ------------- | -------------- |
-| name                | string        | null: false    |
-| image               | ActiveStrageで実装              |
-| text                | text          | null: false    |
-| category            | string        | null: false    |
-| status              | string        | null: false    |
-| shipping_fee        | string        | null: false    |
-| prefecture          | string        | null: false    |
-| schedule_delivery   | string        | null: false    |
-| price               | integer       | null: false    |
-| user_id             | references    |                |
+| Column               | Type          | Options           | 
+| -------------------- | ------------- | ----------------- |
+| name                 | string        | null: false       |
+| image                | ActiveStrageで実装                 |
+| text                 | text          | null: false       |
+| category_id          | integer       | null: false       |
+| status_id            | integer       | null: false       |
+| shipping_fee_id      | integer       | null: false       |
+| prefecture_id        | integer       | null: false       |
+| schedule_delivery_id | integer       | null: false       |
+| price                | integer       | null: false       |
+| user                 | references    | foreign_key: true |
 
 ### Association
 has_one :order
+has_one :purchase_record
 has_many :comments
 
 ## ordersテーブル
-| Column       | Type          | Options        | 
-| ------------ | ------------- | -------------- |
-| card_number  | integer       | null: false    |
-| exp_month    | integer       | null: false    |
-| exp_year     | integer       | null: false    |
-| cvc          | integer       | null: false    |
-| postal_cord  | integer       | null: false    |
-| prefecture   | string        | null: false    |
-| city         | string        | null: false    |
-| address      | string        | null: false    |
-| building     | string        |                |
-| phone_number | integer       | null: false    |
-| item_id      | references    |                |
+| Column        | Type         | Options               |
+| ------------  | ------------ | --------------------- |
+| postal_cord   | string       | null: false           |
+| prefecture_id | integer      | null: false           |
+| city          | string       | null: false           |
+| address       | string       | null: false           |
+| building      | string       |                       |
+| phone_number  | string       | null: false           |
+| item          | references   | foreign_key: true     |
 
 ### Association
 belongs_to :item
 
+## purchase_recordsテーブル
+| Column   | Type       | Options              | 
+| -------- | ---------- | -------------------- |
+| user     | references | foreign_key: true    |
+| item     | references | foreign_key: true    |
+
+### Association
+belongs_to :user
+belongs_to :item
+
+
 ## commentsテーブル
-| Column     | Type       | Options        | 
-| ---------- | ---------- | -------------- |
-| text       | text       | null: false    |
-| user_id    | references |                |
-| item_id    | references |                |
+| Column     | Type       | Options           | 
+| ---------- | ---------- | ----------------- |
+| text       | text       | null: false       |
+| user       | references | foreign_key: true |
+| item       | references | foreign_key: true |
 
 ### Association
 belongs_to :user
