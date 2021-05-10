@@ -121,7 +121,7 @@ RSpec.describe User, type: :model do
       it 'last_nameが漢字・平仮名・片仮名以外だと登録できない' do
         @user.last_name = 'jackson'
         @user.valid?
-        expect(@user.errors.full_messages).to include("Last name is invalid")
+        expect(@user.errors.full_messages).to include("Last name is Full-width characters")
       end
       it 'first_nameが空では登録できない' do
         @user.first_name = ''
@@ -131,7 +131,7 @@ RSpec.describe User, type: :model do
       it 'first_nameが漢字・平仮名・片仮名以外だと登録できない' do
         @user.first_name = 'michael'
         @user.valid?
-        expect(@user.errors.full_messages).to include("First name is invalid")
+        expect(@user.errors.full_messages).to include("First name is Full-width characters")
       end
       it 'last_name_kanaが空では登録できない' do
         @user.last_name_kana = ''
@@ -141,7 +141,7 @@ RSpec.describe User, type: :model do
       it 'last_name_kanaが片仮名以外だと登録できない' do
         @user.last_name_kana = 'じゃくそん'
         @user.valid?
-        expect(@user.errors.full_messages).to include("Last name kana is invalid")
+        expect(@user.errors.full_messages).to include("Last name kana is Full-width characters")
       end
       it 'first_name_kanaが空では登録できない' do
         @user.first_name_kana = ''
@@ -151,7 +151,7 @@ RSpec.describe User, type: :model do
       it 'first_name_kanaが片仮名以外だと登録できない' do
         @user.first_name_kana = 'まいける'
         @user.valid?
-        expect(@user.errors.full_messages).to include("First name kana is invalid")
+        expect(@user.errors.full_messages).to include("First name kana is Full-width characters")
       end
       it 'birth_dateが空では登録できない' do
         @user.birth_date = ''
