@@ -14,7 +14,7 @@ RSpec.describe User, type: :model do
         @user.nickname = 'aaaaaa'
         expect(@user).to be_valid
       end
-      it 'emailは@を含んでいれば登録できる' do
+      it 'emailは@を含む場合登録できる' do
         @user.email.match(/@/)
         expect(@user).to be_valid
       end
@@ -27,19 +27,19 @@ RSpec.describe User, type: :model do
         @user.password.match(/\A(?=.*?[a-z])(?=.*?[\d])[a-z\d]+\z/i)
         expect(@user).to be_valid
       end
-      it 'last_nameは全角ひらがな漢字カタカナであれば登録できる' do
+      it 'last_nameは漢字・平仮名・片仮名であれば登録できる' do
         @user.last_name.match(/\A[ぁ-んァ-ヶ一-龥々ー]+\z/)
         expect(@user).to be_valid
       end
-      it 'first_nameは全角ひらがな漢字カタカナであれば登録できる' do
+      it 'first_nameは漢字・平仮名・片仮名であれば登録できる' do
         @user.first_name.match(/\A[ぁ-んァ-ヶ一-龥々ー]+\z/)
         expect(@user).to be_valid
       end
-      it 'last_name_kanaは全角カタカナであれば登録できる' do
+      it 'last_name_kanaは片仮名であれば登録できる' do
         @user.last_name_kana.match(/\A[ァ-ヶー]+\z/)
         expect(@user).to be_valid
       end
-      it 'first_name_kanaは全角カタカナであれば登録できる' do
+      it 'first_name_kanaは片仮名であれば登録できる' do
         @user.first_name_kana.match(/\A[ァ-ヶー]+\z/)
         expect(@user).to be_valid
       end
@@ -47,21 +47,60 @@ RSpec.describe User, type: :model do
         expect(@user).to be_valid
       end
     end
+
     context '新規登録できないとき' do
       it 'nicknameが空では登録できない' do
         @user.nickname = ''
         @user.valid?
         expect(@user.errors.full_messages).to include("Nickname can't be blank")
       end
+      it 'nicknameは41文字以上では登録できない' do
+        @user.nickname = 'fdfwertyuikmnbvcsijbcdsertyuuyfdvbhgfwerg'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Nickname is too long (maximum is 40 characters)")
+      end
       it 'emailが空では登録できない' do
         @user.email = ''
         @user.valid?
         expect(@user.errors.full_messages).to include("Email can't be blank")
       end
+      it 'emailに@が含まれない場合登録できない' do
+        @user.email = 'test12sample.com'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Email is invalid")
+      end
+      it 'emailが重複していると登録できない' do
+        @user.save
+        another_user = FactoryBot.build(:user)
+        another_user.email = @user.email
+        another_user.valid?
+        expect(another_user.errors.full_messages).to include("Email has already been taken")
+      end
       it 'passwordが空では登録できない' do
         @user.password = ''
         @user.valid?
         expect(@user.errors.full_messages).to include("Password can't be blank")
+      end
+      it 'passwordとpassword_confirmationは5文字以下では登録できない' do
+        @user.password = 'a0a0a'
+        @user.password_confirmation = 'a0a0a'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Password is too short (minimum is 6 characters)")
+      end
+      it 'passwordは半角英語のみでは登録できない' do
+        @user.password = 'qwerty'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Password is invalid")
+      end
+      it 'passwordは半角数字のみでは登録できない' do
+        @user.password = '987654'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Password is invalid")
+      end
+      it 'password全角では登録できない' do
+        @user.password = 'あいうえおか'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Password is invalid")
       end
       it 'passwordが存在しても、password_confirmationが空では登録できない' do
         @user.password_confirmation = ''
@@ -74,43 +113,45 @@ RSpec.describe User, type: :model do
         @user.valid?
         expect(@user.errors.full_messages).to include("Password confirmation doesn't match Password", "Password is invalid")
       end
-      it 'passwordとpassword_confirmationは5文字以下では登録できない' do
-        @user.password = 'a0a0a'
-        @user.password_confirmation = 'a0a0a'
-        @user.valid?
-        expect(@user.errors.full_messages).to include("Password is too short (minimum is 6 characters)")
-      end
-      it 'nicknameは41文字以上では登録できない' do
-        @user.nickname = 'fdfwertyuikmnbvcsijbcdsertyuuyfdvbhgfwerg'
-        @user.valid?
-        expect(@user.errors.full_messages).to include("Nickname is too long (maximum is 40 characters)")
-      end
-      it 'emailが重複していると登録できない' do
-        @user.save
-        another_user = FactoryBot.build(:user)
-        another_user.email = @user.email
-        another_user.valid?
-        expect(another_user.errors.full_messages).to include("Email has already been taken")
-      end
       it 'last_nameが空では登録できない' do
         @user.last_name = ''
         @user.valid?
         expect(@user.errors.full_messages).to include("Last name can't be blank")
+      end
+      it 'last_nameが漢字・平仮名・片仮名以外だと登録できない' do
+        @user.last_name = 'jackson'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Last name is invalid")
       end
       it 'first_nameが空では登録できない' do
         @user.first_name = ''
         @user.valid?
         expect(@user.errors.full_messages).to include("First name can't be blank")
       end
+      it 'first_nameが漢字・平仮名・片仮名以外だと登録できない' do
+        @user.first_name = 'michael'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("First name is invalid")
+      end
       it 'last_name_kanaが空では登録できない' do
         @user.last_name_kana = ''
         @user.valid?
         expect(@user.errors.full_messages).to include("Last name kana can't be blank")
       end
+      it 'last_name_kanaが片仮名以外だと登録できない' do
+        @user.last_name_kana = 'じゃくそん'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Last name kana is invalid")
+      end
       it 'first_name_kanaが空では登録できない' do
         @user.first_name_kana = ''
         @user.valid?
         expect(@user.errors.full_messages).to include("First name kana can't be blank")
+      end
+      it 'first_name_kanaが片仮名以外だと登録できない' do
+        @user.first_name_kana = 'まいける'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("First name kana is invalid")
       end
       it 'birth_dateが空では登録できない' do
         @user.birth_date = ''

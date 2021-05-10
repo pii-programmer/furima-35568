@@ -47,16 +47,29 @@ RSpec.describe User, type: :model do
         expect(@user).to be_valid
       end
     end
+
     context '新規登録できないとき' do
       it 'nicknameが空では登録できない' do
         @user.nickname = ''
         @user.valid?
         expect(@user.errors.full_messages).to include("Nickname can't be blank")
       end
+      it 'nicknameは41文字以上では登録できない' do
+        @user.nickname = 'fdfwertyuikmnbvcsijbcdsertyuuyfdvbhgfwerg'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Nickname is too long (maximum is 40 characters)")
+      end
       it 'emailが空では登録できない' do
         @user.email = ''
         @user.valid?
         expect(@user.errors.full_messages).to include("Email can't be blank")
+      end
+      it 'emailが重複していると登録できない' do
+        @user.save
+        another_user = FactoryBot.build(:user)
+        another_user.email = @user.email
+        another_user.valid?
+        expect(another_user.errors.full_messages).to include("Email has already been taken")
       end
       it 'passwordが空では登録できない' do
         @user.password = ''
@@ -79,18 +92,6 @@ RSpec.describe User, type: :model do
         @user.password_confirmation = 'a0a0a'
         @user.valid?
         expect(@user.errors.full_messages).to include("Password is too short (minimum is 6 characters)")
-      end
-      it 'nicknameは41文字以上では登録できない' do
-        @user.nickname = 'fdfwertyuikmnbvcsijbcdsertyuuyfdvbhgfwerg'
-        @user.valid?
-        expect(@user.errors.full_messages).to include("Nickname is too long (maximum is 40 characters)")
-      end
-      it 'emailが重複していると登録できない' do
-        @user.save
-        another_user = FactoryBot.build(:user)
-        another_user.email = @user.email
-        another_user.valid?
-        expect(another_user.errors.full_messages).to include("Email has already been taken")
       end
       it 'last_nameが空では登録できない' do
         @user.last_name = ''
