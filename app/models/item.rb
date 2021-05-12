@@ -18,9 +18,9 @@ class Item < ApplicationRecord
   has_one_attached :image
 
   extend ActiveHash::Associations::ActiveRecordExtensions
-  belongs_to :category_id
-  belongs_to :status_id
-  belongs_to :shipping_fee_id
-  belongs_to :prefecture_id
-  belongs_to :schedule_delivery_id
+  belongs_to :category
+  belongs_to :status
+  belongs_to :shipping_fee
+  belongs_to :prefecture
+  belongs_to :schedule_delivery
 end
