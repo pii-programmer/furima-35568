@@ -3,8 +3,6 @@ class ItemsController < ApplicationController
 
   def index
     @items = Item.includes(:user).order("created_at DESC")
-    #query = "SELECT * FROM items ORDER BY items.id DESC"
-    #@items = Item.find_by_sql(query)
   end
 
   def new
