@@ -13,4 +13,9 @@ class OrderAddress
     validates :item_id
   end
   validates :building,          format: { with: /\A[ぁ-んァ-ヶ一-龥々ー][a-zA-Z\d]+\z/i }
+
+  def save
+    order = Order.create(user_id: current_user.id, item_id: item.id)
+    Address.create(postal_cord: postal_cord, prefecture_id: prefecture_id, city: city, address: address, building: building, phone_number: phone_number, order_id: order.id)
+  end
 end
