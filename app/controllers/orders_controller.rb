@@ -1,5 +1,7 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
+  before_action :move_to_index, only: :index
+
   def index
     @order_address = OrderAddress.new
     @item = Item.find(params[:item_id])
@@ -20,4 +22,12 @@ class OrdersController < ApplicationController
   def order_params
     params.require(:order_address).permit(:postal_cord, :prefecture_id, :city, :address, :building, :phone_number).merge(user_id: current_user.id, item_id: @item.id, order_id: @order.id)
   end
+
+  def move_to_index
+    @item = Item.find(params[:item_id])
+    if current_user.id == @item.user_id
+      redirect_to root_path
+    end
+  end
+
 end
