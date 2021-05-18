@@ -11,6 +11,7 @@ class OrderAddress
     validates :order_id
     validates :user_id
     validates :item_id
+    validates :token
   end
   validates :building, format: { with: /\A[ぁ-んァ-ヶ一-龥々ー].+\z/ }
 
