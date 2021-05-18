@@ -18,8 +18,8 @@ const pay = () => {
       if (status == 200){
         const token = response.id;
         const renderDom = document.getElementById("charge-form");
-        const tokenObj = `<input value=${token} name='token' type="hidden">`
-        renderDom.insertAdjacentHTML("afterend", tokenObj);
+        const tokenObj = `<input value=${token} name='token' type="hidden">`;
+        renderDom.insertAdjacentHTML("beforeend", tokenObj);
       }
       document.getElementById("card-number").removeAttribute("name");
       document.getElementById("card-exp-month").removeAttribute("name");
