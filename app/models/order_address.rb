@@ -13,7 +13,7 @@ class OrderAddress
     validates :item_id
     validates :token
   end
-  validates :building, format: { with: /\A[ぁ-んァ-ヶ一-龥々ー].+\z/ }
+  validates :building, format: { with: /\A[ぁ-んァ-ヶ一-龥々ー].+\z/ }, allow_blank: true
 
   def save
     order = Order.create(user_id: user_id, item_id: item_id)

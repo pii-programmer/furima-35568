@@ -30,6 +30,10 @@ RSpec.describe OrderAddress, type: :model do
         @order_address.address.match(/\A[ぁ-んァ-ヶ一-龥々ー].+\z/)
         expect(@order_address).to be_valid
       end
+      it 'buildingは空でも購入できる' do
+        @order_address.building = ''
+        expect(@order_address).to be_valid
+      end
       it 'buildingは漢字・平仮名・片仮名とハイフン・ピリオドを含む英数字であれば購入できる' do
         @order_address.building.match(/\A[ぁ-んァ-ヶ一-龥々ー].+\z/)
         expect(@order_address).to be_valid
@@ -47,7 +51,7 @@ RSpec.describe OrderAddress, type: :model do
         expect(@order_address.errors.full_messages).to include("Postal cord can't be blank", "Postal cord is invalid")
       end
       it 'postal_cordは半角数字・ハイフン以外の9文字以上では購入できない' do
-        @order_address.postal_cord = '１２３４５６７８９'
+        @order_address.postal_cord = '1234&56789'
         @order_address.valid?
         expect(@order_address.errors.full_messages).to include("Postal cord is invalid")
       end
@@ -92,7 +96,12 @@ RSpec.describe OrderAddress, type: :model do
         expect(@order_address.errors.full_messages).to include("Phone number can't be blank", "Phone number is invalid")
       end
       it 'phone_numberは半角数字以外の12文字以上では購入できない' do
-        @order_address.phone_number = '１２３４５６７８９０１２'
+        @order_address.phone_number = '123456789012'
+        @order_address.valid?
+        expect(@order_address.errors.full_messages).to include("Phone number is invalid")
+      end
+      it 'phone_numberは英数字混合では購入できない' do
+        @order_address.phone_number = '1k2a3cf45g8'
         @order_address.valid?
         expect(@order_address.errors.full_messages).to include("Phone number is invalid")
       end
