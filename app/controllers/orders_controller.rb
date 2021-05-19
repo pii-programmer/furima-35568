@@ -1,14 +1,13 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_order,     only: [:index, :create]
-  before_action :move_to_index, only: [:index, :create]
+  before_action :set_order
+  before_action :move_to_index
 
   def index
     @order_address = OrderAddress.new
   end
 
   def create
-    @order = Order.create(user_id: current_user.id, item_id: @item.id)
     @order_address = OrderAddress.new(order_params)
     if @order_address.valid?
       pay_item
@@ -21,7 +20,7 @@ class OrdersController < ApplicationController
 
   private
   def order_params
-    params.require(:order_address).permit(:postal_cord, :prefecture_id, :city, :address, :building, :phone_number).merge(user_id: current_user.id, item_id: @item.id, order_id: @order.id, token: params[:token])
+    params.require(:order_address).permit(:postal_cord, :prefecture_id, :city, :address, :building, :phone_number).merge(user_id: current_user.id, item_id: @item.id, token: params[:token])
   end
 
   def set_order

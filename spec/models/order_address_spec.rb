@@ -2,16 +2,15 @@ require 'rails_helper'
 
 RSpec.describe OrderAddress, type: :model do
   before do
-    order = FactoryBot.create(:order)
     user = FactoryBot.create(:user)
     item = FactoryBot.create(:item)
-    @order_address = FactoryBot.build(:order_address, order_id: order.id, user_id: user.id, item_id: item.id)
+    @order_address = FactoryBot.build(:order_address, user_id: user.id, item_id: item.id)
     sleep(1)
   end
 
   describe '商品購入機能' do
     context '商品購入できるとき' do
-      it 'postal_cord、prefecture_id、city、building、address、phone_number、order_id、user_id、item_id、tokenが存在すれば購入できる' do
+      it 'postal_cord、prefecture_id、city、building、address、phone_number、user_id、item_id、tokenが存在すれば購入できる' do
         expect(@order_address).to be_valid
       end
       it 'postal_cordは半角数字・ハイフン8文字以下であれば購入できる' do
@@ -104,11 +103,6 @@ RSpec.describe OrderAddress, type: :model do
         @order_address.phone_number = '1k2a3cf45g8'
         @order_address.valid?
         expect(@order_address.errors.full_messages).to include("Phone number is invalid")
-      end
-      it 'orderが紐づいていないと購入できない' do
-        @order_address.order_id = nil
-        @order_address.valid?
-        expect(@order_address.errors.full_messages).to include("Order can't be blank")
       end
       it 'userが紐づいていないと購入できない' do
         @order_address.user_id = nil
